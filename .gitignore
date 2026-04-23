@@ -1,7 +1,12 @@
 # FinTrack root .gitignore
 
 # ── Docker / Environment ──────────────────────────────────────────────────────
-.env           # contains real secrets — never commit this
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
 
 # ── OS files ──────────────────────────────────────────────────────────────────
 .DS_Store
