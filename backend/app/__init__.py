@@ -54,9 +54,5 @@ def create_app(env_name: str = None) -> Flask:
     @app.route("/api/health")
     def health():
         return {"status": "ok", "app": "FinTrackr"}
-    
-    @app.route("/")
-    def home():
-        return {"status": "running"}
 
     return app
