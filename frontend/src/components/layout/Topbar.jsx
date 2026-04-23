@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Menu } from 'lucide-react'
 import ThemeToggle from '../ui/ThemeToggle'
 import { useAuth } from '../../context/AuthContext'
@@ -15,6 +15,7 @@ const PAGE_TITLES = {
 
 export default function Topbar({ onMenuClick }) {
   const location = useLocation()
+  const navigate = useNavigate()
   const { user } = useAuth()
   const page = PAGE_TITLES[location.pathname] || { title: 'FinTrackr', sub: '' }
 
@@ -36,9 +37,14 @@ export default function Topbar({ onMenuClick }) {
 
       <div className="topbar-right">
         <ThemeToggle />
-        <div className="topbar-avatar" aria-label={`Logged in as ${user?.name}`}>
+        <button
+          className="topbar-avatar"
+          onClick={() => navigate('/profile')}
+          aria-label={`Go to profile – logged in as ${user?.name}`}
+          title="View Profile"
+        >
           {user?.name?.charAt(0).toUpperCase()}
-        </div>
+        </button>
       </div>
     </header>
   )
