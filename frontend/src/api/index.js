@@ -1,68 +1,83 @@
 import axios from 'axios'
 
-// Auth API
+// ── Centralized Axios instance ────────────────────────────────────────────────
+// Set VITE_API_BASE_URL=https://fintrackr-kwri.onrender.com in your .env
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL,
+})
+
+// Attach Bearer token on every request automatically
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('fintrackr_token')
+  if (token) config.headers['Authorization'] = `Bearer ${token}`
+  return config
+})
+
+export default api
+
+// ── Auth API ──────────────────────────────────────────────────────────────────
 export const authApi = {
-  register: (data) => axios.post('/api/auth/register', data),
-  login:    (data) => axios.post('/api/auth/login', data),
-  getMe:    ()     => axios.get('/api/auth/me'),
-  updateMe: (data) => axios.put('/api/auth/me', data),
-  changePassword: (data) => axios.put('/api/auth/change-password', data),
+  register:       (data) => api.post('/api/auth/register', data),
+  login:          (data) => api.post('/api/auth/login', data),
+  getMe:          ()     => api.get('/api/auth/me'),
+  updateMe:       (data) => api.put('/api/auth/me', data),
+  changePassword: (data) => api.put('/api/auth/change-password', data),
 }
 
-// Transactions API
+// ── Transactions API ──────────────────────────────────────────────────────────
 export const transactionsApi = {
-  getAll:  (params) => axios.get('/api/transactions', { params }),
-  create:  (data)   => axios.post('/api/transactions', data),
-  update:  (id, data) => axios.put(`/api/transactions/${id}`, data),
-  delete:  (id)     => axios.delete(`/api/transactions/${id}`),
+  getAll: (params)     => api.get('/api/transactions', { params }),
+  create: (data)       => api.post('/api/transactions', data),
+  update: (id, data)   => api.put(`/api/transactions/${id}`, data),
+  delete: (id)         => api.delete(`/api/transactions/${id}`),
 }
 
-// Categories API
+// ── Categories API ────────────────────────────────────────────────────────────
 export const categoriesApi = {
-  getAll:  (params) => axios.get('/api/categories', { params }),
-  create:  (data)   => axios.post('/api/categories', data),
-  update:  (id, data) => axios.put(`/api/categories/${id}`, data),
-  delete:  (id)     => axios.delete(`/api/categories/${id}`),
+  getAll: (params)     => api.get('/api/categories', { params }),
+  create: (data)       => api.post('/api/categories', data),
+  update: (id, data)   => api.put(`/api/categories/${id}`, data),
+  delete: (id)         => api.delete(`/api/categories/${id}`),
 }
 
-// Dashboard API
+// ── Dashboard API ─────────────────────────────────────────────────────────────
 export const dashboardApi = {
-  getSummary:    (params) => axios.get('/api/dashboard/summary', { params }),
-  getRecent:     (params) => axios.get('/api/dashboard/recent-transactions', { params }),
-  getBreakdown:  (params) => axios.get('/api/dashboard/category-breakdown', { params }),
-  getTrend:      ()       => axios.get('/api/dashboard/monthly-trend'),
-  getBudgetCards:(params) => axios.get('/api/dashboard/budget-cards', { params }),
+  getSummary:     (params) => api.get('/api/dashboard/summary', { params }),
+  getRecent:      (params) => api.get('/api/dashboard/recent-transactions', { params }),
+  getBreakdown:   (params) => api.get('/api/dashboard/category-breakdown', { params }),
+  getTrend:       ()       => api.get('/api/dashboard/monthly-trend'),
+  getBudgetCards: (params) => api.get('/api/dashboard/budget-cards', { params }),
 }
 
-// Budgets API
+// ── Budgets API ───────────────────────────────────────────────────────────────
 export const budgetsApi = {
-  getAll:     (params) => axios.get('/api/budgets', { params }),
-  create:     (data)   => axios.post('/api/budgets', data),
-  update:     (id, data) => axios.put(`/api/budgets/${id}`, data),
-  delete:     (id)     => axios.delete(`/api/budgets/${id}`),
-  getProgress:(params) => axios.get('/api/budgets/progress', { params }),
+  getAll:      (params)   => api.get('/api/budgets', { params }),
+  create:      (data)     => api.post('/api/budgets', data),
+  update:      (id, data) => api.put(`/api/budgets/${id}`, data),
+  delete:      (id)       => api.delete(`/api/budgets/${id}`),
+  getProgress: (params)   => api.get('/api/budgets/progress', { params }),
 }
 
-// Savings Goals API
+// ── Savings Goals API ─────────────────────────────────────────────────────────
 export const savingsApi = {
-  getAll:      (params) => axios.get('/api/savings-goals', { params }),
-  create:      (data)   => axios.post('/api/savings-goals', data),
-  update:      (id, data) => axios.put(`/api/savings-goals/${id}`, data),
-  delete:      (id)     => axios.delete(`/api/savings-goals/${id}`),
-  contribute:  (id, data) => axios.patch(`/api/savings-goals/${id}/contribute`, data),
+  getAll:     (params)   => api.get('/api/savings-goals', { params }),
+  create:     (data)     => api.post('/api/savings-goals', data),
+  update:     (id, data) => api.put(`/api/savings-goals/${id}`, data),
+  delete:     (id)       => api.delete(`/api/savings-goals/${id}`),
+  contribute: (id, data) => api.patch(`/api/savings-goals/${id}/contribute`, data),
 }
 
-// Insights API
+// ── Insights API ──────────────────────────────────────────────────────────────
 export const insightsApi = {
-  getAll:    (params) => axios.get('/api/insights', { params }),
-  generate:  (data)   => axios.post('/api/insights/generate', data),
-  markRead:  (id)     => axios.patch(`/api/insights/${id}/read`),
+  getAll:   (params) => api.get('/api/insights', { params }),
+  generate: (data)   => api.post('/api/insights/generate', data),
+  markRead: (id)     => api.patch(`/api/insights/${id}/read`),
 }
 
-// Reports API
+// ── Reports API ───────────────────────────────────────────────────────────────
 export const reportsApi = {
-  getAll:    ()       => axios.get('/api/reports'),
-  generate:  (data)   => axios.post('/api/reports/generate', data),
-  getOne:    (id)     => axios.get(`/api/reports/${id}`),
-  exportCsv: (id)     => axios.get(`/api/reports/${id}/export/csv`, { responseType: 'blob' }),
+  getAll:    ()   => api.get('/api/reports'),
+  generate:  (data) => api.post('/api/reports/generate', data),
+  getOne:    (id) => api.get(`/api/reports/${id}`),
+  exportCsv: (id) => api.get(`/api/reports/${id}/export/csv`, { responseType: 'blob' }),
 }
